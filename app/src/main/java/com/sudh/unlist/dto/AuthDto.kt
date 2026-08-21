@@ -12,7 +12,7 @@ data class AuthResponse(
 )
 
 data class AuthUser(
-    val name: String,
+    val name: String? = null,
     val email: String,
     val picture: String? = null
 )

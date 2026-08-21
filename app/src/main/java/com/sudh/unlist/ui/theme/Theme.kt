@@ -254,8 +254,10 @@ val unspecified_scheme = ColorFamily(
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Dynamic color (Android 12+ Material You) is deliberately OFF by default.
+    // Unlist's identity is built around the #C62828 red-flag seed color — letting
+    // the wallpaper override it would defeat the point. Do not flip this to true.
+    dynamicColor: Boolean = false,
     content: @Composable() () -> Unit
 ) {
   val colorScheme = when {

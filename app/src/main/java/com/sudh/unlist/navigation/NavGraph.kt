@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sudh.unlist.components.FloatingBottomNavBar
 import com.sudh.unlist.screens.HomeScreen
+import com.sudh.unlist.screens.LoginScreen
 import com.sudh.unlist.screens.SavedScreen
 import com.sudh.unlist.screens.SettingsScreen
 import com.sudh.unlist.screens.ReportFullScreen
@@ -20,46 +21,76 @@ import com.sudh.unlist.screens.ReportFullScreen
 /**
  * Root navigation graph for the app.
  *
- * Hosts the three bottom-nav destinations (Home, Saved, Settings) plus the
- * ReportFullScreen drill-in destination. The floating bottom nav bar is shown
- * only on the three primary destinations and hidden on ReportFullScreen.
+ * Hosts Login, the three bottom-nav destinations (Home, Saved, Settings), and the
+ * ReportFullScreen drill-in destination. The floating bottom nav bar is shown only on the
+ * three primary destinations and hidden on Login and ReportFullScreen.
+ *
+ * @param startDestination Home if a session already exists (checked once, synchronously, in
+ *   MainActivity via TokenManager), Login otherwise — avoids a login-screen flash on every launch.
+ * @param sharedUrl a URL shared into the app from Cars24/Spinny via the Android share sheet.
+ * @param sharedReportId the id from a shared-report deep link (unlist://report/{id}).
  */
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(
+    navController: NavHostController,
+    startDestination: String = Screen.Home.route,
+    sharedUrl: String? = null,
+    sharedReportId: String? = null
+) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
     Box(modifier = Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = startDestination,
             modifier = Modifier.fillMaxSize()
         ) {
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    onNavigateToHome = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onExpandReport = { reportId ->
-                        navController.navigate(Screen.ReportFullScreen.createRoute(reportId))
+                    sharedUrl = sharedUrl,
+                    sharedReportId = sharedReportId,
+                    onExpandReport = { navKey ->
+                        navController.navigate(Screen.ReportFullScreen.createRoute(navKey))
+                    },
+                    onRequireSignIn = {
+                        navController.navigate(Screen.Login.route)
                     }
                 )
             }
 
             composable(Screen.Saved.route) {
                 SavedScreen(
-                    onExpandReport = { reportId ->
-                        navController.navigate(Screen.ReportFullScreen.createRoute(reportId))
+                    onExpandReport = { navKey ->
+                        navController.navigate(Screen.ReportFullScreen.createRoute(navKey))
                     }
                 )
             }
 
             composable(Screen.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(
+                    onSignedOut = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
 
-            composable(Screen.ReportFullScreen.route) { backStackEntry ->
-                val reportId = backStackEntry.arguments?.getString("reportId").orEmpty()
+            composable(Screen.ReportFullScreen.route) {
                 ReportFullScreen(
-                    reportId = reportId,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onRequireSignIn = { navController.navigate(Screen.Login.route) }
                 )
             }
         }

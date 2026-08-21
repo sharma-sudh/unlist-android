@@ -18,6 +18,9 @@ import androidx.compose.material.icons.filled.Settings
  */
 sealed class Screen(val route: String) {
 
+    /** Single sign-in screen. No onboarding step after auth — straight to Home. */
+    data object Login : Screen("login")
+
     data object Home : Screen("home"), BottomNavItem {
         override val label = "Home"
         override val selectedIcon: ImageVector = Icons.Filled.Home
