@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Email
@@ -64,7 +65,7 @@ fun SettingsScreen(
                 headlineContent = { Text("Email") },
                 supportingContent = {
                     when {
-                        uiState.loadingEmail -> CircularProgressIndicator(modifier = Modifier.height(16.dp), strokeWidth = 2.dp)
+                        uiState.loadingEmail -> CircularProgressIndicator()
                         uiState.email != null -> Text(uiState.email!!)
                         else -> Text("Unavailable")
                     }

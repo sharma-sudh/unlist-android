@@ -51,8 +51,13 @@ sealed class Screen(val route: String) {
     }
 
     companion object {
+        // by lazy, not eager: `Home`/`Saved`/`Settings` are separate nested-object classes,
+        // and referencing them here at Screen's own static-init time can race their class
+        // loading (order is JVM/bytecode-layout dependent) — causing an NPE if Screen's
+        // <clinit> runs before a sibling object's singleton has been constructed. Deferring
+        // to first access sidesteps the ordering entirely.
         /** All routes that should display the bottom navigation bar. */
-        val bottomNavRoutes = setOf(Home.route, Saved.route, Settings.route)
+        val bottomNavRoutes: Set<String> by lazy { setOf(Home.route, Saved.route, Settings.route) }
     }
 }
 

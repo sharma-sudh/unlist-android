@@ -1,9 +1,6 @@
 package com.sudh.unlist.viewmodel
 
 import android.app.Application
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -75,9 +72,11 @@ class ReportFullViewModel(
             _uiState.update { it.copy(sharing = true) }
             app.reportRepository.share(report)
                 .onSuccess { response ->
-                    val clipboard = app.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    clipboard.setPrimaryClip(ClipData.newPlainText("Unlist report link", Constants.deepLinkFor(response.id)))
-                    _events.emit("Link copied to clipboard")
+                    // Same "share:" sentinel convention as "sign_in_required" below — ReportFullScreen
+                    // has the Context needed to open the native share sheet, this ViewModel doesn't.
+                    val text = "Check out this car's inspection report on Unlist: " +
+                        "${Constants.deepLinkFor(response.id)}\n(Opens in the Unlist app)"
+                    _events.emit("share:$text")
                 }
                 .onFailure { e -> _events.emit(e.message ?: "Couldn't create a share link.") }
             _uiState.update { it.copy(sharing = false) }

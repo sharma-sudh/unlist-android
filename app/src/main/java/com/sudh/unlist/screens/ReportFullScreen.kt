@@ -1,5 +1,6 @@
 package com.sudh.unlist.screens
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -35,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sudh.unlist.components.EmptyState
@@ -62,13 +65,20 @@ fun ReportFullScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { message ->
-            if (message == "sign_in_required") {
-                onRequireSignIn()
-            } else {
-                snackbarHostState.showSnackbar(message)
+            when {
+                message == "sign_in_required" -> onRequireSignIn()
+                message.startsWith("share:") -> {
+                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, message.removePrefix("share:"))
+                    }
+                    context.startActivity(Intent.createChooser(sendIntent, "Share report"))
+                }
+                else -> snackbarHostState.showSnackbar(message)
             }
         }
     }
@@ -86,7 +96,7 @@ fun ReportFullScreen(
                     if (uiState.report != null) {
                         IconButton(onClick = viewModel::saveReport, enabled = !uiState.isSaved && !uiState.saving) {
                             if (uiState.saving) {
-                                CircularProgressIndicator(modifier = Modifier.height(20.dp), strokeWidth = 2.dp)
+                                CircularProgressIndicator()
                             } else {
                                 Icon(
                                     if (uiState.isSaved) Icons.Outlined.Bookmark else Icons.Outlined.BookmarkBorder,
@@ -96,7 +106,7 @@ fun ReportFullScreen(
                         }
                         IconButton(onClick = viewModel::shareReport, enabled = !uiState.sharing) {
                             if (uiState.sharing) {
-                                CircularProgressIndicator(modifier = Modifier.height(20.dp), strokeWidth = 2.dp)
+                                CircularProgressIndicator()
                             } else {
                                 Icon(Icons.Outlined.Share, contentDescription = "Share")
                             }

@@ -1,9 +1,6 @@
 package com.sudh.unlist.viewmodel
 
 import android.app.Application
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.sudh.unlist.UnlistApplication
@@ -32,6 +29,8 @@ data class SavedUiState(
 sealed class SavedEvent {
     data class ShowUndoSnackbar(val title: String) : SavedEvent()
     data class ShowMessage(val message: String) : SavedEvent()
+    /** Ask the screen (which has a Context) to open the native Android share sheet. */
+    data class LaunchShareSheet(val text: String) : SavedEvent()
 }
 
 class SavedViewModel(application: Application) : AndroidViewModel(application) {
@@ -72,9 +71,9 @@ class SavedViewModel(application: Application) : AndroidViewModel(application) {
             _uiState.update { it.copy(sharingReportId = item.id) }
             reportRepository.share(item.report)
                 .onSuccess { response ->
-                    val clipboard = app.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    clipboard.setPrimaryClip(ClipData.newPlainText("Unlist report link", Constants.deepLinkFor(response.id)))
-                    _events.emit(SavedEvent.ShowMessage("Link copied to clipboard"))
+                    val text = "Check out this car's inspection report on Unlist: " +
+                        "${Constants.deepLinkFor(response.id)}\n(Opens in the Unlist app)"
+                    _events.emit(SavedEvent.LaunchShareSheet(text))
                 }
                 .onFailure { e -> _events.emit(SavedEvent.ShowMessage(e.message ?: "Couldn't create a share link.")) }
             _uiState.update { it.copy(sharingReportId = null) }

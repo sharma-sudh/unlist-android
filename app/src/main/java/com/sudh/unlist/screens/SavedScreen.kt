@@ -1,5 +1,6 @@
 package com.sudh.unlist.screens
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -36,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sudh.unlist.components.EmptyState
@@ -61,6 +65,7 @@ fun SavedScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var openedReportKey by remember { mutableStateOf<String?>(null) }
     var openedReportId by remember { mutableStateOf<Int?>(null) }
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
@@ -77,6 +82,13 @@ fun SavedScreen(
                     }
                 }
                 is SavedEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
+                is SavedEvent.LaunchShareSheet -> {
+                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, event.text)
+                    }
+                    context.startActivity(Intent.createChooser(sendIntent, "Share report"))
+                }
             }
         }
     }
@@ -94,6 +106,30 @@ fun SavedScreen(
                 uiState.loading && uiState.reports.isEmpty() -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
+                    }
+                }
+                // Checked before the plain "empty" branch below: a failed load (auth hiccup,
+                // network blip, backend cold-start/restart) must never look identical to
+                // "you genuinely have zero saved reports" — that's what was masking the real
+                // cause here. Only reachable when reports is empty; a failed refresh with
+                // existing reports on screen just keeps showing the stale list.
+                uiState.error != null && uiState.reports.isEmpty() -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(horizontal = 32.dp)
+                        ) {
+                            Text(
+                                text = uiState.error ?: "Couldn't load your saved reports.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            OutlinedButton(onClick = viewModel::refresh) {
+                                Text("Retry")
+                            }
+                        }
                     }
                 }
                 uiState.reports.isEmpty() -> {

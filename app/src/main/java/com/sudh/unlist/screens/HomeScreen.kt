@@ -1,5 +1,6 @@
 package com.sudh.unlist.screens
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -36,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sudh.unlist.components.CompareResultsSection
@@ -62,6 +65,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(sharedUrl) {
         sharedUrl?.let { viewModel.consumeSharedUrl(it) }
@@ -74,6 +78,13 @@ fun HomeScreen(
             when (event) {
                 is HomeEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
                 is HomeEvent.RequireSignIn -> onRequireSignIn()
+                is HomeEvent.LaunchShareSheet -> {
+                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, event.text)
+                    }
+                    context.startActivity(Intent.createChooser(sendIntent, "Share report"))
+                }
             }
         }
     }
@@ -109,7 +120,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (uiState.analyseLoading) {
-                    CircularProgressIndicator(modifier = Modifier.height(20.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator()
                 } else {
                     Text("Analyse")
                 }
@@ -163,7 +174,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (uiState.compareLoading) {
-                    CircularProgressIndicator(modifier = Modifier.height(20.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator()
                 } else {
                     Text("Compare")
                 }
@@ -194,7 +205,13 @@ fun HomeScreen(
             onSave = viewModel::saveCurrentReport,
             onShare = viewModel::shareCurrentReport,
             onAddToCompare = viewModel::addCurrentReportToCompare,
-            onExpand = { onExpandReport(dialogState.navKey) }
+            onExpand = {
+                // Dismiss first: otherwise dialog.state stays Shown, and popping back from
+                // ReportFullScreen to Home re-shows this same dialog immediately, which reads
+                // as "back doesn't work" / looping straight back into the expanded flow.
+                viewModel.dismissDialog()
+                onExpandReport(dialogState.navKey)
+            }
         )
     }
 }

@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -121,7 +123,7 @@ fun ReportDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -130,23 +132,27 @@ fun ReportDialog(
                         label = if (isSaved) "Saved" else "Save",
                         loading = saving,
                         enabled = !isSaved,
-                        onClick = onSave
+                        onClick = onSave,
+                        modifier = Modifier.weight(1f)
                     )
                     DialogActionButton(
                         icon = Icons.Outlined.Share,
                         label = "Share",
                         loading = sharing,
-                        onClick = onShare
+                        onClick = onShare,
+                        modifier = Modifier.weight(1f)
                     )
                     DialogActionButton(
                         icon = Icons.Outlined.CompareArrows,
                         label = "Compare",
-                        onClick = onAddToCompare
+                        onClick = onAddToCompare,
+                        modifier = Modifier.weight(1f)
                     )
                     DialogActionButton(
                         icon = Icons.Outlined.OpenInFull,
                         label = "Expand",
-                        onClick = onExpand
+                        onClick = onExpand,
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
@@ -179,18 +185,35 @@ private fun DialogActionButton(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     loading: Boolean = false,
     enabled: Boolean = true
 ) {
-    TextButton(onClick = onClick, enabled = enabled && !loading) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.width(20.dp)) {
-            if (loading) {
-                CircularProgressIndicator(modifier = Modifier.width(16.dp), strokeWidth = 2.dp)
-            } else {
-                Icon(icon, contentDescription = label, modifier = Modifier.width(20.dp))
+    // contentPadding trimmed so 4 buttons comfortably share the row on compact-width phones;
+    // maxLines/overflow guard against the label ever collapsing into a vertical, one-letter-per-line
+    // wrap when its share of the row gets squeezed.
+    TextButton(
+        onClick = onClick,
+        enabled = enabled && !loading,
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+        modifier = modifier
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.height(20.dp)) {
+                if (loading) {
+                    CircularProgressIndicator()
+                } else {
+                    Icon(icon, contentDescription = label, modifier = Modifier.width(20.dp))
+                }
             }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                label,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Clip,
+                softWrap = false
+            )
         }
-        Spacer(Modifier.width(6.dp))
-        Text(label, style = MaterialTheme.typography.labelLarge)
     }
 }

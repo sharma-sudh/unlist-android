@@ -1,9 +1,6 @@
 package com.sudh.unlist.viewmodel
 
 import android.app.Application
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.sudh.unlist.UnlistApplication
@@ -52,6 +49,8 @@ data class HomeUiState(
 sealed class HomeEvent {
     data class ShowMessage(val message: String) : HomeEvent()
     data object RequireSignIn : HomeEvent()
+    /** Ask the screen (which has a Context) to open the native Android share sheet. */
+    data class LaunchShareSheet(val text: String) : HomeEvent()
 }
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -205,8 +204,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             _uiState.update { it.copy(dialog = shown.copy(sharing = true)) }
             reportRepository.share(shown.report)
                 .onSuccess { response ->
-                    copyToClipboard(Constants.deepLinkFor(response.id))
-                    _events.emit(HomeEvent.ShowMessage("Link copied to clipboard"))
+                    // The unlist:// link only opens for people who already have the app installed —
+                    // hand it off through the normal Android share sheet (with context) rather than
+                    // silently dropping it on the clipboard with no indication of what to do next.
+                    val text = "Check out this car's inspection report on Unlist: " +
+                        "${Constants.deepLinkFor(response.id)}\n(Opens in the Unlist app)"
+                    _events.emit(HomeEvent.LaunchShareSheet(text))
                 }
                 .onFailure { e -> _events.emit(HomeEvent.ShowMessage(e.message ?: "Couldn't create a share link.")) }
             _uiState.update { it.copy(dialog = shown.copy(sharing = false)) }
@@ -228,8 +231,4 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun copyToClipboard(text: String) {
-        val clipboard = app.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("Unlist report link", text))
-    }
 }
