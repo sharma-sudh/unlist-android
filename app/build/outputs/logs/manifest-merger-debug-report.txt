@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-47:12
-INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-47:12
-INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-47:12
-INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-47:12
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-68:12
+INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-68:12
+INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-68:12
+INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:2:1-68:12
 MERGED from [androidx.navigation:navigation-common:2.8.4] C:\Users\sudha\.gradle\caches\9.4.1\transforms\04c5d88ff99aba52b96dd2636b824f5c\transformed\navigation-common-2.8.4\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.8.4] C:\Users\sudha\.gradle\caches\9.4.1\transforms\20e93e103cdbfe2a685335021728c757\transformed\navigation-runtime-2.8.4\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-common-ktx:2.8.4] C:\Users\sudha\.gradle\caches\9.4.1\transforms\176c8cc023edcaf62ed1cb5c346b6bd1\transformed\navigation-common-ktx-2.8.4\AndroidManifest.xml:2:1-7:12
@@ -124,8 +124,8 @@ ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:6:5-79
 	android:name
 		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:6:22-76
 application
-ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:8:5-45:19
-INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:8:5-45:19
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:8:5-66:19
+INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:8:5-66:19
 MERGED from [androidx.credentials:credentials-play-services-auth:1.5.0] C:\Users\sudha\.gradle\caches\9.4.1\transforms\2ff3b588d4c893b0422d0e6a7f11a9c3\transformed\credentials-play-services-auth-1.5.0\AndroidManifest.xml:23:5-50:19
 MERGED from [androidx.credentials:credentials-play-services-auth:1.5.0] C:\Users\sudha\.gradle\caches\9.4.1\transforms\2ff3b588d4c893b0422d0e6a7f11a9c3\transformed\credentials-play-services-auth-1.5.0\AndroidManifest.xml:23:5-50:19
 MERGED from [com.google.android.gms:play-services-auth:21.1.1] C:\Users\sudha\.gradle\caches\9.4.1\transforms\e2cc461d30e8feb241b1ee978bc5eb2f\transformed\play-services-auth-21.1.1\AndroidManifest.xml:22:5-38:19
@@ -181,7 +181,7 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\su
 	android:name
 		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:9:9-42
 activity#com.sudh.unlist.MainActivity
-ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:18:9-44:20
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:18:9-65:20
 	android:label
 		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:22:13-45
 	android:launchMode
@@ -215,23 +215,29 @@ ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:32:17-76
 data
 ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:33:17-55
 	android:host
-		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:42:47-68
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:46:47-68
 	android:scheme
-		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:42:23-46
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:46:23-46
 	android:mimeType
 		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:33:23-52
+	android:pathPrefix
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:63:21-50
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:report+data:scheme:unlist
-ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:38:13-43:29
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:42:13-47:29
 	android:autoVerify
-		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:38:28-54
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:42:28-54
 action#android.intent.action.VIEW
-ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:39:17-69
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:43:17-69
 	android:name
-		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:39:25-66
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:43:25-66
 category#android.intent.category.BROWSABLE
-ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:41:17-78
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:45:17-78
 	android:name
-		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:41:27-75
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:45:27-75
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:unlist-backend-s280.onrender.com+data:pathPrefix:/report/+data:scheme:https
+ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:56:13-64:29
+	android:autoVerify
+		ADDED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml:56:28-53
 uses-sdk
 INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Unlist\unlist-android\app\src\main\AndroidManifest.xml

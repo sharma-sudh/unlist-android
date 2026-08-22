@@ -1,0 +1,8 @@
+com.sudh.unlist.app-pngs-0 D:\Unlist\unlist-android\app\build\generated\res\pngs\release
+com.sudh.unlist.app-updated_navigation_xml-1 D:\Unlist\unlist-android\app\build\generated\updated_navigation_xml\release
+com.sudh.unlist.app-packageReleaseResources-2 D:\Unlist\unlist-android\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.sudh.unlist.app-packageReleaseResources-3 D:\Unlist\unlist-android\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.sudh.unlist.app-release-4 D:\Unlist\unlist-android\app\build\intermediates\merged_res\release\mergeReleaseResources
+com.sudh.unlist.app-main-5 D:\Unlist\unlist-android\app\src\main\res
+com.sudh.unlist.app-release-6 D:\Unlist\unlist-android\app\src\release\res
+gradleHome-0 C:\Users\sudha\.gradle

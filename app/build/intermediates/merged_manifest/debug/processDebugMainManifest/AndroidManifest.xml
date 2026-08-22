@@ -56,7 +56,11 @@
 
             <!--
                  Deep link for shared report links produced by the Share action, e.g.
-                 unlist://report/<id>
+                 unlist://report/<id>. Kept alongside the https:// App Link below purely so the
+                 backend's web fallback page (applinks.py's render_report_page) can still target
+                 the app directly via intent://report/<id>#Intent;scheme=unlist;...;end — that
+                 bypasses App Link verification, which is fine there since the user already
+                 explicitly tapped an "Open in app" button while looking at that exact page.
             -->
             <intent-filter android:autoVerify="false" >
                 <action android:name="android.intent.action.VIEW" />
@@ -67,6 +71,27 @@
                 <data
                     android:host="report"
                     android:scheme="unlist" />
+            </intent-filter>
+
+            <!--
+                 Verified App Link for shared report links, e.g.
+                 https://unlist-backend-s280.onrender.com/report/<id> — this is what the Share
+                 action itself now generates (see Constants.deepLinkFor). autoVerify="true" makes
+                 Android check /.well-known/assetlinks.json on this host at install time; if it
+                 matches this app's signing certificate, links to this host open Unlist directly
+                 instead of a browser. Host here MUST exactly match Constants.APP_LINK_HOST and
+                 the domain applinks.py serves assetlinks.json from.
+            -->
+            <intent-filter android:autoVerify="true" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="unlist-backend-s280.onrender.com"
+                    android:pathPrefix="/report/"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 

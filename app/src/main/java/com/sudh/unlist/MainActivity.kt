@@ -1,6 +1,7 @@
 package com.sudh.unlist
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -66,11 +67,28 @@ class MainActivity : ComponentActivity() {
             }
             Intent.ACTION_VIEW -> {
                 val data = intent.data
-                if (data != null && data.scheme == Constants.DEEP_LINK_SCHEME && data.host == Constants.DEEP_LINK_HOST) {
+                if (data != null && isReportLink(data)) {
                     data.lastPathSegment?.let { sharedReportIdState = it }
                 }
             }
         }
+    }
+
+    /**
+     * True for either shape a shared report link can arrive in:
+     *  - unlist://report/<id> — the legacy custom-scheme link, and the one the backend's own
+     *    web fallback page still opens via its "Open in Unlist app" button.
+     *  - https://<APP_LINK_HOST>/report/<id> — the verified App Link that Constants.deepLinkFor
+     *    now generates for Share. android:pathPrefix="/report/" in the manifest is what makes
+     *    Android route this to the app at all; this check just mirrors that same shape so both
+     *    forms extract the report id identically via lastPathSegment below.
+     */
+    private fun isReportLink(data: Uri): Boolean {
+        val isCustomScheme = data.scheme == Constants.DEEP_LINK_SCHEME && data.host == Constants.DEEP_LINK_HOST
+        val isAppLink = data.scheme == "https" &&
+            data.host == Constants.APP_LINK_HOST &&
+            data.path?.startsWith("/report/") == true
+        return isCustomScheme || isAppLink
     }
 
     /** Share text from Cars24/Spinny often includes a sentence around the link — pull just the URL. */
