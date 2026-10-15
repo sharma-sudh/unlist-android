@@ -42,7 +42,9 @@ object RetrofitClient {
             .addInterceptor(AuthInterceptor { tokenProvider() })
             .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            // /compare scrapes + runs Gemini for up to 4 listings, then a verdict call — and
+            // Render cold starts add more. 30s was cutting it off.
+            .readTimeout(120, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
